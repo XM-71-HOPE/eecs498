@@ -1,0 +1,7 @@
+# 笔记本用（没有 NVIDIA 显卡，装 CPU 版 torch）
+#   uv pip install -r requirements-cpu.txt
+
+--extra-index-url https://download.pytorch.org/whl/cpu
+-r requirements.txt
+torch==2.14.0+cpu
+torchvision==0.29.0+cpu

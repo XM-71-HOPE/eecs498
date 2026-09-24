@@ -1,0 +1,31 @@
+# EECS 498-007 / 598-005 作业环境 —— 公共依赖（不含 torch）
+#
+# torch 两台机器要装不同的构建，所以拆成两个文件：
+#   笔记本（无 N 卡）  : uv pip install -r requirements-cpu.txt
+#   台式机（RTX 5060 Ti）: uv pip install -r requirements-cuda.txt
+#
+# 只想要公共部分：
+#   uv pip install -r requirements.txt
+#
+# 版本是按笔记本上已经跑通的那套钉的。
+
+jupyterlab==4.6.4
+ipykernel==7.3.0
+numpy==2.4.6
+matplotlib==3.11.2
+scipy==1.17.1
+pillow==12.3.0
+tqdm==4.70.1
+
+# 下面三个课程代码真的会 import，缺了会直接崩：
+#   A3/eecs598/utils.py 顶层就 import cv2
+#   A5/a5_helper.py     顶层就 import seaborn
+#   A4/a4_helper.py     函数里 import wget
+# 用 headless 版，免得依赖 libGL。课程只用 cv2 的 resize / putText / rectangle，
+# 不需要窗口显示。想用完整版就换成 opencv-python。
+opencv-python-headless
+seaborn
+wget
+
+# 可选：提交 git 时自动剥掉 notebook 输出
+# nbstripout

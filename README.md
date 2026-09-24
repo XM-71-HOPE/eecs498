@@ -52,15 +52,34 @@ eecs498/
 
 ### 1. 环境
 
+用 uv 建环境，依赖钉在 `requirements*.txt` 里。**两个文件，按机器选一个：**
+
 ```bash
-python3 -m venv ~/venvs/eecs498
-source ~/venvs/eecs498/bin/activate
-pip install -U pip
-pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
-pip install jupyterlab numpy matplotlib scipy tqdm
+uv venv .venv
+source .venv/bin/activate
+
+# 笔记本（没有 N 卡）
+uv pip install -r requirements-cpu.txt
+
+# 台式机（RTX 5060 Ti，跑 CUDA）
+uv pip install -r requirements-cuda.txt
 ```
 
-国内下载慢就挂代理：`pip install --proxy http://127.0.0.1:7897 ...`（Clash 的混合端口）。
+`requirements.txt` 是公共依赖（不含 torch），另两个文件在它基础上加对应的 torch 构建。
+版本钉死了：torch 2.14.0 / torchvision 0.29.0，两台机器一致，代码行为才一致。
+
+装完验证：
+
+```bash
+python -c "import torch, torchvision; print(torch.__version__, torchvision.__version__, torch.cuda.is_available())"
+```
+
+笔记本上 `cuda.is_available()` 是 `False`，台式机上应该是 `True`。
+
+下载慢就挂代理：`export HTTPS_PROXY=http://127.0.0.1:7897`。
+
+> 注意：uv 建的 venv 默认不带 pip。要么一律用 `uv pip install`，要么 `uv venv --seed`。
+> 在 venv 里敲裸 `pip` 会落到系统的 `/usr/bin/pip`，撞上 PEP 668 报錯。
 
 ### 2. notebook 已经改好了
 
@@ -82,13 +101,20 @@ pip install jupyterlab numpy matplotlib scipy tqdm
 
 ### 4. 关于 GPU
 
-这台笔记本没有 NVIDIA 显卡，所以：
+两台机器的分工：
 
-- **A1、A2 本地跑没问题**，CPU 完全够。
-- **A3 能跑但慢**（在 CIFAR-10 上训网络，CPU 上可能几十分钟起步），能接受就这样跑。
-- **A4、A5、A6 建议上 Colab 免费 GPU**（T4），或者换有显卡的机器。
-  这几份 notebook 里有些地方写死了 `device='cuda'`，在纯 CPU 机器上要把 `'cuda'` 改成 `'cpu'`。
-  需要的话我可以批量改一遍。
+| 机器 | 显卡 | torch | 适合做 |
+|---|---|---|---|
+| 笔记本 | 无 | 2.14.0+cpu | A1、A2，以及读代码、调试 |
+| 台式机 | RTX 5060 Ti 16GB | 2.14.0+cu130 | A3 ~ A6 的训练 |
+
+- **A1、A2 在笔记本上跑完全没问题**，CPU 够用。
+- **A3 往后搬到台式机**。有显卡之后，CIFAR-10 训练、目标检测、风格迁移都不再是负担，
+  也不用再去蹭 Colab 的免费 T4。
+- 笔记本上硬要跑 A3 之后的：notebook 里有些地方写死了 `device='cuda'`，
+  纯 CPU 机器上得把 `'cuda'` 改成 `'cpu'`，而且会明显慢。
+- 台式机驱动 610.43.02，显卡是 Blackwell（compute capability 12.0），
+  必须用 CUDA 12.8 以上的构建，所以选 cu130（cu132 里也有同一版本，cu134 那个索引反而是空的）。
 
 ### 5. 数据
 
