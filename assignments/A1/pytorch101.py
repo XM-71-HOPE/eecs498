@@ -327,7 +327,9 @@ def take_one_elem_per_col(x: Tensor) -> Tensor:
     #                      TODO: Implement this function                     #
     ##########################################################################
     # Replace "pass" statement with your code
-    pass
+    idx1=[1, 0, 3]
+    idx2=[0, 1, 2]
+    y = x[idx1, idx2]
     ##########################################################################
     #                            END OF YOUR CODE                            #
     ##########################################################################
@@ -355,7 +357,9 @@ def make_one_hot(x: List[int]) -> Tensor:
     #                      TODO: Implement this function                     #
     ##########################################################################
     # Replace "pass" statement with your code
-    pass
+    c = max(x) + 1
+    y = torch.zeros(len(x), c)
+    y[range(0, len(x)), x] = 1
     ##########################################################################
     #                            END OF YOUR CODE                            #
     ##########################################################################
