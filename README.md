@@ -1,0 +1,137 @@
+# EECS 498-007 / 598-005 Deep Learning for Computer Vision — 材料包
+
+UMich Justin Johnson 的计算机视觉课（Winter 2022）。**原官网已经下线**：
+`https://web.eecs.umich.edu/~justincj/` 整站 404，所有课件/作业链接全部失效。
+本目录里的东西是从 Wayback Machine 快照和公开仓库里捞回来、整理好的，离线可用。
+
+整理时间：2026-09-20
+
+---
+
+## 目录结构
+
+```
+eecs498/
+├── assignments/            作业（主打）
+│   ├── A1/                 起点：PyTorch 101 + kNN（骨架为重建，见下文说明）
+│   ├── A2/ ... A6/         官方 starter 原样解压（未做题）
+│   └── official-zips/      官方 A2~A6.zip 原件
+├── reference-solutions/    A1~A6 的 2019 版已解答 notebook（来自公开仓库，仅作参考）
+├── notes/                  全课程手写笔记 PDF（95 MB）+ HTML 版
+└── archive-pages/          官方页面快照：6 份作业说明 + schedule + syllabus + project
+```
+
+---
+
+## 六次作业
+
+| 作业 | 主题 | 关键文件 |
+|---|---|---|
+| A1 | PyTorch 基础 + kNN 分类器 | `pytorch101.py/.ipynb`、`knn.py/.ipynb` |
+| A2 | 线性分类器（SVM / Softmax）+ 两层网络 | `linear_classifier.*`、`two_layer_net.*`、`challenge_problem.ipynb` |
+| A3 | 全连接网络 + 卷积网络（手写反向传播、BN、Dropout） | `fully_connected_networks.*`、`convolutional_networks.*` |
+| A4 | 目标检测：单阶段 FCOS + 两阶段 Faster R-CNN | `one_stage_detector.*`、`two_stage_detector.*`、`common.py` |
+| A5 | 注意力模型：RNN/LSTM 图像描述 + Transformer | `rnn_lstm_captioning.*`、`Transformers.*` |
+| A6 | 生成模型：VAE + GAN + 网络可视化 + 风格迁移 | `variational_autoencoders.*`、`generative_adversarial_networks.*`、`network_visualization.*`、`style_transfer.*` |
+
+每个作业目录里都有一个 `eecs598/` 包（课程工具：数据下载、可视化、提交脚本），
+原样保留，不要删。
+
+### 关于 A1 的说明
+
+官方的 `A1.zip` **没有被任何快照存档**（A2~A6 都有，唯独缺它）。
+现在的 `assignments/A1/` 是我从一份结构一致的公开作业里，把每道题答案区
+（`# Replace "pass" statement with your code` 到 `# END OF YOUR CODE` 之间）
+清空并还原成 `pass` 得到的纯净骨架，函数名、docstring、TODO 提示与官方一致；
+`eecs598/` 包取自同一来源。notebook 输出也已清空。
+如果你更想要一份带解答的对照，去 `reference-solutions/A1/`。
+
+---
+
+## 怎么跑
+
+### 1. 环境
+
+```bash
+python3 -m venv ~/venvs/eecs498
+source ~/venvs/eecs498/bin/activate
+pip install -U pip
+pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
+pip install jupyterlab numpy matplotlib scipy tqdm
+```
+
+国内下载慢就挂代理：`pip install --proxy http://127.0.0.1:7897 ...`（Clash 的混合端口）。
+
+### 2. notebook 已经改好了
+
+原版 notebook 是给 Google Colab 写的，开头几句 `drive.mount` 在本地会直接报错。
+**本包里的 15 个 notebook 已经改成本地 / Colab 双通道**：开头那段会自动判断运行环境，
+本地跑就用 notebook 所在目录作为 `GOOGLE_DRIVE_PATH`，在 Colab 上则照旧挂 Drive。
+所以你不用手改任何代码，直接依次 Shift+Enter 就行。
+
+### 3. 工作循环
+
+每次作业的流程是一样的：
+
+1. 在 `.py` 里实现函数（例如 A1 的 `knn.py`、A3 的 `convolutional_networks.py`）。
+   notebook 会 `autoreload`，改完 `.py` 不用重启内核。
+2. 回 notebook 里跑对应的 cell。每个实现后面都跟着自检 cell，里面写了**预期数值**（索引、误差、准确率的量级）。
+   对上了就说明做对了。
+3. 卡住就去看讲义里对应的那一讲，或者 `reference-solutions/` 里别人的实现（建议自己写完再看）。
+4. 最后的 `make_aX_submission(...)` 那个 cell 是交作业用的，校外没有 Autograder，**跳过**。
+
+### 4. 关于 GPU
+
+这台笔记本没有 NVIDIA 显卡，所以：
+
+- **A1、A2 本地跑没问题**，CPU 完全够。
+- **A3 能跑但慢**（在 CIFAR-10 上训网络，CPU 上可能几十分钟起步），能接受就这样跑。
+- **A4、A5、A6 建议上 Colab 免费 GPU**（T4），或者换有显卡的机器。
+  这几份 notebook 里有些地方写死了 `device='cuda'`，在纯 CPU 机器上要把 `'cuda'` 改成 `'cpu'`。
+  需要的话我可以批量改一遍。
+
+### 5. 数据
+
+数据集由 `eecs598/data.py` / `a4_helper.py` 自动下载（CIFAR-10、VOC2007 等），第一次跑会慢。
+下载地址是国外的，慢的话同样挂代理：`export https_proxy=http://127.0.0.1:7897`。
+
+---
+
+## 视频
+
+- B 站中英字幕（2019 版全 22 讲，ShowMeAI 整理）：`https://www.bilibili.com/video/BV13P4y1t7gM`
+- 另一份 2019 中英字幕（23 个视频）：`https://www.bilibili.com/video/BV1jA4m1P7GN`
+- 2020 版中英字幕：`https://www.bilibili.com/video/BV1hhybYnE6n`
+- 官方 YouTube 播放列表（Fall 2019）：`https://www.youtube.com/playlist?list=PL5-TkQAfAZFbzxjBHtzdVCWE0Zbhomg7r`
+
+注：2019 与 2022 的讲次顺序略有差别，但作业主题对应关系基本一致。
+
+---
+
+## 课件（slides）
+
+官网的 slide PDF 也没有活的链接了，但 Wayback 里存着。模板（把 `NN` 换成 01~25）：
+
+```
+https://web.archive.org/web/2024id_/https://web.eecs.umich.edu/~justincj/slides/eecs498/WI2022/598_WI2022_lectureNN.pdf
+```
+
+每讲对应主题见 `archive-pages/schedule.html`（本地打开即可，里面是完整的讲义清单和推荐阅读）。
+需要的话我可以把 25 份 slide 全部下载到本地（总共几百 MB，单文件最大 ~80 MB）。
+
+---
+
+## 原站快照
+
+- 课程主页（WI2022）：`https://web.archive.org/web/20250623085956/https://web.eecs.umich.edu/~justincj/teaching/eecs498/WI2022/`
+- 作业说明页的离线副本在 `archive-pages/`（改写自存档 HTML，链接仍指向 Wayback）。
+
+---
+
+## 参考仓库
+
+- `frankly6/eecs498-19fa-notes-and-assignments` — 本包 notes 和 reference-solutions 的来源
+- `grygry12345/DLCV-EECS498` — A1 骨架重建的来源
+- `Anwarvic/DL-for-Computer-Vision-2020-Michigan-Course` — FA2020 版作业解答
+- `iMeleon/EECS-498-007-598-005-solutions` — 2019/2020 版作业解答
+- `Michael-Jetson/ML_DL_CV_with_pytorch` — 二三十万字中文笔记

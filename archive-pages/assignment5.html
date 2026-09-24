@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en"><head><script type="text/javascript" src="https://web-static.archive.org/_static/js/bundle-playback.js?v=lGQTDXxZ" charset="utf-8"></script>
+<script type="text/javascript" src="https://web-static.archive.org/_static/js/wombat.js?v=o9P2E1FK" charset="utf-8"></script>
+<script>window.RufflePlayer=window.RufflePlayer||{};window.RufflePlayer.config={"autoplay":"on","unmuteOverlay":"hidden","showSwfDownload":true};</script>
+<script type="text/javascript" src="https://web-static.archive.org/_static/js/ruffle/ruffle.js"></script>
+<script type="text/javascript">
+    __wm.init("https://web.archive.org/web");
+  __wm.wombat("https://web.eecs.umich.edu/~justincj/teaching/eecs498/WI2022/assignment5.html","20260119231208","https://web.archive.org/","web","https://web-static.archive.org/_static/",
+	      "1768864328");
+</script>
+<link rel="stylesheet" type="text/css" href="https://web-static.archive.org/_static/css/banner-styles.css?v=1utQkbB3" />
+<link rel="stylesheet" type="text/css" href="https://web-static.archive.org/_static/css/iconochive.css?v=3PDvdIFv" />
+<!-- End Wayback Rewrite JS Include -->
+
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.7.1 -->
+<title>Assignment 5 | EECS 498-007 / 598-005: Deep Learning for Computer Vision</title>
+<meta name="generator" content="Jekyll v4.0.1"/>
+<meta property="og:title" content="Assignment 5"/>
+<meta name="author" content="Justin Johnson"/>
+<meta property="og:locale" content="en_US"/>
+<meta name="description" content="Website for UMich EECS course"/>
+<meta property="og:description" content="Website for UMich EECS course"/>
+<link rel="canonical" href="https://web.archive.org/web/20260119231208/https://web.eecs.umich.edu/~justincj/teaching/eecs498/WI2022/assignment5.html"/>
+<meta property="og:url" content="https://web.archive.org/web/20260119231208/https://web.eecs.umich.edu/~justincj/teaching/eecs498/WI2022/assignment5.html"/>
+<meta property="og:site_name" content="EECS 498-007 / 598-005: Deep Learning for Computer Vision"/>
+<meta name="twitter:card" content="summary"/>
+<meta property="twitter:title" content="Assignment 5"/>
+<script type="application/ld+json">
+{"headline":"Assignment 5","author":{"@type":"Person","name":"Justin Johnson"},"url":"https://web.archive.org/web/20260119231208/https://web.eecs.umich.edu/~justincj/teaching/eecs498/WI2022/assignment5.html","@type":"WebPage","description":"Website for UMich EECS course","@context":"https://web.archive.org/web/20260119231208/https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="https://web.archive.org/web/20260119231208cs_/https://fonts.googleapis.com/css?family=Roboto:400,300">
+  
+  <link rel="stylesheet" href="https://web.archive.org/web/20260119231208cs_/https://web.eecs.umich.edu/~justincj/teaching/eecs498/assets/main.css">
+  <link type="application/atom+xml" rel="alternate" href="https://web.archive.org/web/20260119231208/https://web.eecs.umich.edu/~justincj/teaching/eecs498/feed.xml" title="EECS 498-007 / 598-005: Deep Learning for Computer Vision"/><link rel="stylesheet" href="https://web.archive.org/web/20260119231208cs_/https://web.eecs.umich.edu/~justincj/teaching/eecs498/assets/mine.css">
+  <link rel="stylesheet" href="https://web.archive.org/web/20260119231208cs_/https://web.eecs.umich.edu/~justincj/teaching/eecs498/assets/mine.css">
+  <script>
+    window.MathJax = {
+      tex: {
+        tags: 'ams',
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+      }
+    };
+  </script>
+  <script src="https://web.archive.org/web/20260119231208js_/https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://web.archive.org/web/20260119231208js_/https://cdn.jsdelivr.net/npm/mathjax@3.0.0/es5/tex-mml-chtml.js"></script>
+</head>
+<body><header class="site-header my-header" role="banner">
+  <img class="logo" src="https://web.archive.org/web/20260119231208im_/https://web.eecs.umich.edu/~justincj/teaching/eecs498/assets/img/umich.png">
+  <div class="wrapper"><div class="my-title">
+        <a class="site-title" rel="author" href=".">
+          
+            EECS 498-007 / 598-005
+          
+          <br>
+          Deep Learning for Computer Vision
+        </a>
+        <div class="my-subtitle">
+          Winter 2022
+        </div>
+      </div>
+  </div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Assignment 5</h1>
+  </header>
+
+  <div class="post-content">
+    <p>In this assignment, you will implement two different attention-based models, RNN and Transformers. The goals of this assignment are:</p>
+
+<ul>
+  <li>Understand and implement recurrent neural networks</li>
+  <li>See how recurrent neural networks can be used for image captioning</li>
+  <li>Understand how to augment recurrent neural networks with attention</li>
+  <li>Understand and implement different building blocks of the Transformer model</li>
+  <li>Use the Transformer model on a toy dataset</li>
+</ul>
+
+<p>This assignment is due on  <strong>Tuesday, April 12th</strong> at 11:59pm ET.</p>
+
+<h1 id="q1-image-captioning-with-recurrent-neural-networks-50-points">Q1: Image Captioning with Recurrent Neural Networks (50 points)</h1>
+
+<p>The notebook <strong>rnn_lstm_attention_captioning.ipynb</strong> will walk you through the implementation of vanilla recurrent neural networks (RNN) and Long Short Term Memory (LSTM) RNNs. You will use these networks to train an image captioning model. You will then augment your implementation to perform spatial attention over image regions while generating captions.</p>
+
+<h1 id="q2-transformer-model-for-simple-arithmetic-operations-50-points">Q2: Transformer model for simple arithmetic operations (50 points)</h1>
+
+<p>The notebook <strong>Transformers.ipynb</strong> will walk you through the implementation of the Transformer model. You will first implement different building blocks referenced from the paper Attention is All You Need(https://arxiv.org/abs/1706.03762), and then use it on a toy dataset for simple addition and subtraction arithmetic expression. In the end, you will see what does a Transformer model learn by visualizing it’s attention weights.</p>
+
+<h2 id="steps">Steps</h2>
+
+<h1 id="1-download-the-zipped-assignment-file">1. Download the zipped assignment file</h1>
+<ul>
+  <li><a href="assignments/A5.zip">Click here to download the starter code</a></li>
+</ul>
+
+<h1 id="2-unzip-all-and-open-the-colab-file-from-the-drive">2. Unzip all and open the Colab file from the Drive</h1>
+<p>Once you unzip the downloaded content, please upload the folder to your Google Drive.
+Then, open each <code class="highlighter-rouge">*.ipynb</code> notebook file with Google Colab by right-clicking the *.ipynb file.
+We recommend editing your <code class="highlighter-rouge">*.py</code> file on Google Colab, set the ipython notebook and the code side by side.
+For more information on using Colab, please see our <a href="colab.html">Colab tutorial</a>.</p>
+
+<h1 id="3-work-on-the-assignment">3. Work on the assignment</h1>
+<p>Work through the notebook, executing cells and writing code in <code class="highlighter-rouge">*.py,</code> as indicated.
+You can save your work, both <code class="highlighter-rouge">*.ipynb</code> and <code class="highlighter-rouge">*.py,</code> in Google Drive (click “File” -&gt; “Save”) and resume later if you don’t want to complete it all at once.</p>
+
+<p>While working on the assignment, keep the following in mind:</p>
+<ul>
+  <li>The notebook and the python file have clearly marked blocks where you are expected to write code.
+<strong>Do not write or modify any code outside of these blocks</strong>.</li>
+  <li><strong>Do not add or delete cells from the notebook</strong>. You may add new cells to
+perform scratch computations, but you should delete them before submitting
+your work.</li>
+  <li><strong>IMPORTANT: Run all cells, and do not clear out the outputs, before submitting.</strong>
+You will only get credit for code that has been run.</li>
+</ul>
+
+<h1 id="4-evaluate-your-implementation-on-autograder">4. Evaluate your implementation on Autograder</h1>
+<p>Once you want to evaluate your implementation,
+please submit the <code class="highlighter-rouge">*.py</code>, <code class="highlighter-rouge">*.ipynb</code> and other required files to Autograder for grading your implementations in the middle or after implementing everything. You can partially grade some of the files in the middle, but please make sure that this also reduces the daily submission quota. Please check our <a href="autograder.html">Autograder tutorial</a> for details.</p>
+
+<h1 id="5-download-zip-file">5. Download .zip file</h1>
+<p>Once you have completed a notebook, download the completed <code class="highlighter-rouge">uniqueid_umid_A5.zip</code> file, which is generated from your last cell of the <code class="highlighter-rouge">transformers.ipynb</code> file. Before executing the last cell in <code class="highlighter-rouge">rnn_lstm_attention_captioning.ipynb</code>, please manually <strong>run all the cells of notebook and save your results</strong> so that the zip file includes all updates.</p>
+
+<p><strong>Make sure your downloaded zip file includes your most up-to-date edits</strong>; the zip file should include:</p>
+
+<ul>
+  <li><em>transformers.py</em></li>
+  <li><em>rnn_lstm_attention_captioning.py</em></li>
+  <li><em>Transformers.ipynb</em></li>
+  <li><em>rnn_lstm_attention_captioning.ipynb</em></li>
+  <li><em>rnn_lstm_attention_submission.pt</em></li>
+  <li><em>transformer.pt</em></li>
+</ul>
+
+<h1 id="6-submit-your-python-and-ipython-notebook-files-to-autograder">6. Submit your python and ipython notebook files to Autograder</h1>
+<p>When you are done, <a href="https://web.archive.org/web/20260119231208/https://autograder.io/">please upload your work to Autograder (UMich enrolled students only)</a>. Your <code class="highlighter-rouge">*.ipynb</code> files <em>SHOULD include</em> all the outputs. Please check your outputs up to date before submitting yours to Autograder.</p>
+
+
+  </div>
+
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">EECS 498-007 / 598-005: Deep Learning for Computer Vision</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li class="p-name">Justin Johnson</li><li><a class="u-email" href="https://web.archive.org/web/20260119231208/mailto:justincj@umich.edu">justincj@umich.edu</a></li></ul>
+      </div>
+
+      <div class="footer-col footer-col-2"><ul class="social-media-list"></ul>
+</div>
+
+      <div class="footer-col footer-col-3">
+        <p>Website for UMich EECS course</p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
+<!--
+     FILE ARCHIVED ON 23:12:08 Jan 19, 2026 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 07:24:31 Sep 20, 2026.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->
+<!--
+playback timings (ms):
+  captures_list: 0.494
+  exclusion.robots: 0.063
+  exclusion.robots.policy: 0.053
+  esindex: 0.008
+  cdx.remote: 14.571
+  LoadShardBlock: 81.892 (3)
+  PetaboxLoader3.datanode: 86.53 (4)
+  PetaboxLoader3.resolve: 65.215 (2)
+  load_resource: 111.298
+-->

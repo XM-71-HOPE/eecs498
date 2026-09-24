@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en"><head><script type="text/javascript" src="https://web-static.archive.org/_static/js/bundle-playback.js?v=lGQTDXxZ" charset="utf-8"></script>
+<script type="text/javascript" src="https://web-static.archive.org/_static/js/wombat.js?v=o9P2E1FK" charset="utf-8"></script>
+<script>window.RufflePlayer=window.RufflePlayer||{};window.RufflePlayer.config={"autoplay":"on","unmuteOverlay":"hidden","showSwfDownload":true};</script>
+<script type="text/javascript" src="https://web-static.archive.org/_static/js/ruffle/ruffle.js"></script>
+<script type="text/javascript">
+    __wm.init("https://web.archive.org/web");
+  __wm.wombat("https://web.eecs.umich.edu/~justincj/teaching/eecs498/WI2022/assignment1.html","20260119230937","https://web.archive.org/","web","https://web-static.archive.org/_static/",
+	      "1768864177");
+</script>
+<link rel="stylesheet" type="text/css" href="https://web-static.archive.org/_static/css/banner-styles.css?v=1utQkbB3" />
+<link rel="stylesheet" type="text/css" href="https://web-static.archive.org/_static/css/iconochive.css?v=3PDvdIFv" />
+<!-- End Wayback Rewrite JS Include -->
+
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.7.1 -->
+<title>Assignment 1 | EECS 498-007 / 598-005: Deep Learning for Computer Vision</title>
+<meta name="generator" content="Jekyll v4.0.1"/>
+<meta property="og:title" content="Assignment 1"/>
+<meta name="author" content="Justin Johnson"/>
+<meta property="og:locale" content="en_US"/>
+<meta name="description" content="Website for UMich EECS course"/>
+<meta property="og:description" content="Website for UMich EECS course"/>
+<link rel="canonical" href="https://web.archive.org/web/20260119230937/https://web.eecs.umich.edu/~justincj/teaching/eecs498/WI2022/assignment1.html"/>
+<meta property="og:url" content="https://web.archive.org/web/20260119230937/https://web.eecs.umich.edu/~justincj/teaching/eecs498/WI2022/assignment1.html"/>
+<meta property="og:site_name" content="EECS 498-007 / 598-005: Deep Learning for Computer Vision"/>
+<meta name="twitter:card" content="summary"/>
+<meta property="twitter:title" content="Assignment 1"/>
+<script type="application/ld+json">
+{"headline":"Assignment 1","author":{"@type":"Person","name":"Justin Johnson"},"url":"https://web.archive.org/web/20260119230937/https://web.eecs.umich.edu/~justincj/teaching/eecs498/WI2022/assignment1.html","@type":"WebPage","description":"Website for UMich EECS course","@context":"https://web.archive.org/web/20260119230937/https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="https://web.archive.org/web/20260119230937cs_/https://fonts.googleapis.com/css?family=Roboto:400,300">
+  
+  <link rel="stylesheet" href="https://web.archive.org/web/20260119230937cs_/https://web.eecs.umich.edu/~justincj/teaching/eecs498/assets/main.css">
+  <link type="application/atom+xml" rel="alternate" href="https://web.archive.org/web/20260119230937/https://web.eecs.umich.edu/~justincj/teaching/eecs498/feed.xml" title="EECS 498-007 / 598-005: Deep Learning for Computer Vision"/><link rel="stylesheet" href="https://web.archive.org/web/20260119230937cs_/https://web.eecs.umich.edu/~justincj/teaching/eecs498/assets/mine.css">
+  <link rel="stylesheet" href="https://web.archive.org/web/20260119230937cs_/https://web.eecs.umich.edu/~justincj/teaching/eecs498/assets/mine.css">
+  <script>
+    window.MathJax = {
+      tex: {
+        tags: 'ams',
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+      }
+    };
+  </script>
+  <script src="https://web.archive.org/web/20260119230937js_/https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://web.archive.org/web/20260119230937js_/https://cdn.jsdelivr.net/npm/mathjax@3.0.0/es5/tex-mml-chtml.js"></script>
+</head>
+<body><header class="site-header my-header" role="banner">
+  <img class="logo" src="https://web.archive.org/web/20260119230937im_/https://web.eecs.umich.edu/~justincj/teaching/eecs498/assets/img/umich.png">
+  <div class="wrapper"><div class="my-title">
+        <a class="site-title" rel="author" href=".">
+          
+            EECS 498-007 / 598-005
+          
+          <br>
+          Deep Learning for Computer Vision
+        </a>
+        <div class="my-subtitle">
+          Winter 2022
+        </div>
+      </div>
+  </div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Assignment 1</h1>
+  </header>
+
+  <div class="post-content">
+    <p>In this assignment, you will first learn how to use <a href="https://web.archive.org/web/20260119230937/https://pytorch.org/">PyTorch</a> on <a href="https://web.archive.org/web/20260119230937/https://colab.research.google.com/">Google Colab</a> environment. You will then practice putting together a simple image classification pipeline, based on the k-Nearest Neighbor, and finally will learn how to use <a href="https://web.archive.org/web/20260119230937/https://autograder.io/">Autograder</a> for evaluating what you implement. The goals of this assignment are as follows:</p>
+
+<ul>
+  <li>Develop proficiency with PyTorch tensors</li>
+  <li>Gain experience using notebooks on Google Colab</li>
+  <li>Understand the basic Image Classification pipeline and the data-driven approach (train/predict stages)</li>
+  <li>Understand the train/val/test splits and the use of validation data for hyperparameter tuning</li>
+  <li>Implement and apply a k-Nearest Neighbor (kNN) classifier</li>
+  <li>Learn how to test your implementation on Autograder</li>
+</ul>
+
+<p>This assignment is due on <strong>Friday, January 14, at 11:59 PM EST</strong>.</p>
+
+<h1 id="q1-pytorch-101-60-points">Q1: PyTorch 101 (60 points)</h1>
+
+<p>The notebook <strong>pytorch101.ipynb</strong> will walk you through the basics of working with tensors in PyTorch. You are required to write code on <strong>pytorch101.py</strong>.</p>
+
+<h1 id="q2-k-nearest-neighbor-classifier-40-points">Q2: k-Nearest Neighbor classifier (40 points)</h1>
+
+<p>The notebook <strong>knn.ipynb</strong> will walk you through implementing a kNN classifier. Your implementation will go to <strong>knn.py</strong>.</p>
+
+<h2 id="steps">Steps</h2>
+
+<h1 id="1-download-the-zipped-assignment-file">1. Download the zipped assignment file</h1>
+<ul>
+  <li><a href="assignments/A1.zip">Click here to download the starter code</a></li>
+</ul>
+
+<h1 id="2-unzip-all-and-open-the-colab-file-from-the-drive">2. Unzip all and open the Colab file from the Drive</h1>
+<p>Once you unzip the downloaded content, please upload the folder to your Google Drive.
+Then, open each <code class="highlighter-rouge">*.ipynb</code> notebook file with Google Colab by right-clicking the *.ipynb file.
+No installation or setup is required!
+For more information on using Colab, please see our <a href="colab.html">Colab tutorial</a>.</p>
+
+<h1 id="3-open-your-corresponding-py-from-google-colab-and-work-on-the-assignment">3. Open your corresponding *.py from Google Colab and work on the assignment</h1>
+<p>Next, we recommend editing your <code class="highlighter-rouge">*.py</code> file on Google Colab, set the ipython notebook and the code side by side.
+Work through the notebook, executing cells and implementing the codes in the <code class="highlighter-rouge">*.py</code> file as indicated.
+You can save your work, both <code class="highlighter-rouge">*.ipynb</code> and <code class="highlighter-rouge">*.py,</code> in Google Drive (click “File” -&gt; “Save”) and resume later if you don’t want to complete it all at once.</p>
+
+<p>While working on the assignment, keep the following in mind:</p>
+<ul>
+  <li>The notebook and the python file have clearly marked blocks where you are expected to write code.
+<strong>Do not write or modify any code outside of these blocks</strong>.</li>
+  <li><strong>Do not add or delete cells from the notebook</strong>. You may add new cells to
+perform scratch computations, but you should delete them before submitting
+your work.</li>
+  <li><strong>Run all cells, and do not clear out the outputs, before submitting.</strong>
+You will only get credit for code that has been run.</li>
+</ul>
+
+<h1 id="4-evaluate-your-implementation-on-autograder">4. Evaluate your implementation on Autograder</h1>
+<p>Once you want to evaluate your implementation,
+please submit the <code class="highlighter-rouge">*.py</code> and <code class="highlighter-rouge">*.ipynb</code> files to Autograder for grading your implementations in the middle or after implementing everything. You can partially grade some of the files in the middle, but please make sure that this also reduces the daily submission quota. Please check our <a href="autograder.html">Autograder tutorial</a> for details.</p>
+
+<h1 id="5-download-zip-file">5. Download .zip file</h1>
+<p>Once you have completed a notebook, download the completed <code class="highlighter-rouge">uniqueid_umid_A1.zip</code> file, which is generated from your last cell of the <code class="highlighter-rouge">knn.ipynb</code> file.</p>
+
+<p><strong>Make sure your downloaded zip file includes your most up-to-date edits</strong>; the zip file should include <em>pytorch101.ipynb</em>, <em>knn.ipynb</em>, <em>pytorch101.py</em>, <em>knn.py</em> for this assignment.</p>
+
+<h1 id="6-submit-your-python-and-ipython-notebook-files-to-autograder">6. Submit your python and ipython notebook files to Autograder</h1>
+<p>When you are done, <a href="https://web.archive.org/web/20260119230937/https://autograder.io/">please upload your work to Autograder (UMich enrolled students only)</a>. Your ipynb files <em>SHOULD include</em> all the outputs.</p>
+
+
+  </div>
+
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">EECS 498-007 / 598-005: Deep Learning for Computer Vision</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li class="p-name">Justin Johnson</li><li><a class="u-email" href="https://web.archive.org/web/20260119230937/mailto:justincj@umich.edu">justincj@umich.edu</a></li></ul>
+      </div>
+
+      <div class="footer-col footer-col-2"><ul class="social-media-list"></ul>
+</div>
+
+      <div class="footer-col footer-col-3">
+        <p>Website for UMich EECS course</p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
+<!--
+     FILE ARCHIVED ON 23:09:37 Jan 19, 2026 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 07:24:22 Sep 20, 2026.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->
+<!--
+playback timings (ms):
+  captures_list: 0.435
+  exclusion.robots: 0.051
+  exclusion.robots.policy: 0.043
+  esindex: 0.008
+  cdx.remote: 15.424
+  LoadShardBlock: 58.992 (3)
+  PetaboxLoader3.datanode: 65.072 (4)
+  load_resource: 82.154
+  PetaboxLoader3.resolve: 37.532
+-->
