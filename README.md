@@ -52,21 +52,26 @@ eecs498/
 
 ### 1. 环境
 
-用 uv 建环境，依赖钉在 `requirements*.txt` 里。**两个文件，按机器选一个：**
+用 uv 建环境，依赖钉在 `requirements*.txt` 里。**分两条命令：先公共依赖，再 torch。**
 
 ```bash
 uv venv .venv
 source .venv/bin/activate
 
-# 笔记本（没有 N 卡）
-uv pip install -r requirements-cpu.txt
+# 公共依赖（两台机器一样）
+uv pip install -r requirements.txt
 
-# 台式机（RTX 5060 Ti，跑 CUDA）
-uv pip install -r requirements-cuda.txt
+# 然后选一条（索引地址写在文件里了，不用带参数）：
+uv pip install -r requirements-cpu.txt    # 笔记本（没有 N 卡）
+uv pip install -r requirements-cuda.txt   # 台式机（RTX 5060 Ti）
 ```
 
-`requirements.txt` 是公共依赖（不含 torch），另两个文件在它基础上加对应的 torch 构建。
-版本钉死了：torch 2.14.0 / torchvision 0.29.0，两台机器一致，代码行为才一致。
+**为什么要分两条：** PyTorch 自己的索引里也有 tqdm、numpy 这些包，但版本是旧的
+（tqdm 只到 4.66.5）。uv 默认只认"第一个含该包的索引"，而且 `--extra-index-url`
+会遮蔽默认索引，混在一条命令里会报 unsatisfiable。所以两条命令彻底分开，各自用自己的索引。
+
+版本钉死了：torch 2.14.0 / torchvision 0.29.0，两台机器一致，只是构建不同（cpu / cu130）。
+CUDA 版还会拉一批 `nvidia-*-cu13` 和 triton，下载量大概 2~3GB，预留点时间。
 
 装完验证：
 

@@ -1,7 +1,13 @@
-# 笔记本用（没有 NVIDIA 显卡，装 CPU 版 torch）
-#   uv pip install -r requirements-cpu.txt
+--index-url https://download.pytorch.org/whl/cpu
 
---extra-index-url https://download.pytorch.org/whl/cpu
--r requirements.txt
+# 笔记本用（没有 N 卡）：装 CPU 版 torch
+#
+#   uv pip install -r requirements.txt       # 1) 公共依赖
+#   uv pip install -r requirements-cpu.txt   # 2) torch（索引就写在下面这行，不用带参数）
+#
+# 为什么不合成一条：PyTorch 自己的索引里也有 tqdm、numpy 这些包，但版本很旧
+# （tqdm 只到 4.66.5）。uv 默认只认"第一个含该包的索引"，而且 extra-index 会遮蔽
+# 默认索引，所以两条命令要彻底分开，各自用自己的索引。
+
 torch==2.14.0+cpu
 torchvision==0.29.0+cpu

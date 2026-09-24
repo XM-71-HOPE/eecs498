@@ -1,14 +1,20 @@
-# 台式机用（RTX 5060 Ti，16GB，compute capability 12.0）
+--index-url https://download.pytorch.org/whl/cu130
+
+# 台式机用（RTX 5060 Ti，16GB，compute capability 12.0）：装 CUDA 版 torch
 #
-# 5060 Ti 是 Blackwell 架构，需要 CUDA 12.8 以上的构建，
-# 所以走 cu130 索引（cu132 也可以，cu134 那个索引里没有新版本）。
+#   uv pip install -r requirements.txt        # 1) 公共依赖
+#   uv pip install -r requirements-cuda.txt   # 2) torch（索引就写在上面那行，不用带参数）
 #
-#   uv pip install -r requirements-cuda.txt
+# 为什么不合成一条：PyTorch 自己的索引里也有 tqdm、numpy 这些包，但版本很旧
+# （tqdm 只到 4.66.5）。uv 默认只认"第一个含该包的索引"，而且 extra-index 会遮蔽
+# 默认索引，所以两条命令要彻底分开，各自用自己的索引。
 #
-# 装完可以验一下显卡能不能被 torch 看到：
+# 为什么是 cu130：5060 Ti 是 Blackwell 架构，需要 CUDA 12.8 以上的构建。
+# 官方索引里 cu130 和 cu132 都有 2.14.0，cu134 那个索引反而是空的。
+#
+# 这一条会拉 20 多个包（nvidia-*-cu13、triton 等），2~3GB。
+# 装完验证：
 #   python -c "import torch; print(torch.cuda.is_available(), torch.cuda.get_device_name(0))"
 
---extra-index-url https://download.pytorch.org/whl/cu130
--r requirements.txt
 torch==2.14.0+cu130
 torchvision==0.29.0+cu130
