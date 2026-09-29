@@ -12,6 +12,7 @@ __pycache__/
 # ==================== 数据集 ====================
 # 作业第一次跑会自己下载，从几百 MB 到几 GB，绝对不要进仓库
 cifar-10-batches-py/
+cifar-10-batches-py
 cifar-10-python.tar.gz
 datasets/
 VOCdevkit/
