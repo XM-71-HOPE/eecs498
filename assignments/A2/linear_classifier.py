@@ -2,6 +2,7 @@
 Implements linear classifeirs in PyTorch.
 WARNING: you SHOULD NOT use ".to()" or ".cuda()" in each implementation block.
 """
+
 import torch
 import random
 import statistics
@@ -125,9 +126,7 @@ class Softmax(LinearClassifier):
 # **************************************************#
 
 
-def svm_loss_naive(
-    W: torch.Tensor, X: torch.Tensor, y: torch.Tensor, reg: float
-):
+def svm_loss_naive(W: torch.Tensor, X: torch.Tensor, y: torch.Tensor, reg: float):
     """
     Structured SVM loss function, naive implementation (with loops).
 
@@ -169,7 +168,8 @@ def svm_loss_naive(
                 # at the same time that the loss is being computed.                   #
                 #######################################################################
                 # Replace "pass" statement with your code
-                pass
+                dW[:, j] += X[i]
+                dW[:, y[i]] -= X[i]
                 #######################################################################
                 #                       END OF YOUR CODE                              #
                 #######################################################################
@@ -187,7 +187,8 @@ def svm_loss_naive(
     # and add it to dW. (part 2)                                                #
     #############################################################################
     # Replace "pass" statement with your code
-    pass
+    dW /= num_train
+    dW += 2 * reg * W
     #############################################################################
     #                             END OF YOUR CODE                              #
     #############################################################################
@@ -195,9 +196,7 @@ def svm_loss_naive(
     return loss, dW
 
 
-def svm_loss_vectorized(
-    W: torch.Tensor, X: torch.Tensor, y: torch.Tensor, reg: float
-):
+def svm_loss_vectorized(W: torch.Tensor, X: torch.Tensor, y: torch.Tensor, reg: float):
     """
     Structured SVM loss function, vectorized implementation. When you implment
     the regularization over W, please DO NOT multiply the regularization term by
@@ -223,7 +222,12 @@ def svm_loss_vectorized(
     # result in loss.                                                           #
     #############################################################################
     # Replace "pass" statement with your code
-    pass
+    scores = X.mm(W)  # shape (N, C)
+    rows = torch.arange(0, X.shape[0])
+    margin = scores + scores[rows, y] + 1
+    margin = margin.clamp(min=0)
+    margin[rows, y] = 0
+    loss = sum(margin[margin > 0]) / X.shape[0]
     #############################################################################
     #                             END OF YOUR CODE                              #
     #############################################################################
@@ -246,9 +250,7 @@ def svm_loss_vectorized(
     return loss, dW
 
 
-def sample_batch(
-    X: torch.Tensor, y: torch.Tensor, num_train: int, batch_size: int
-):
+def sample_batch(X: torch.Tensor, y: torch.Tensor, num_train: int, batch_size: int):
     """
     Sample batch_size elements from the training data and their
     corresponding labels to use in this round of gradient descent.
@@ -309,9 +311,7 @@ def train_linear_classifier(
     if W is None:
         # lazily initialize W
         num_classes = torch.max(y) + 1
-        W = 0.000001 * torch.randn(
-            dim, num_classes, device=X.device, dtype=X.dtype
-        )
+        W = 0.000001 * torch.randn(dim, num_classes, device=X.device, dtype=X.dtype)
     else:
         num_classes = W.shape[1]
 
@@ -453,9 +453,7 @@ def test_one_param_set(
 # **************************************************#
 
 
-def softmax_loss_naive(
-    W: torch.Tensor, X: torch.Tensor, y: torch.Tensor, reg: float
-):
+def softmax_loss_naive(W: torch.Tensor, X: torch.Tensor, y: torch.Tensor, reg: float):
     """
     Softmax loss function, naive implementation (with loops).  When you implment
     the regularization over W, please DO NOT multiply the regularization term by
