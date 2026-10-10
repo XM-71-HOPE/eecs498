@@ -497,21 +497,39 @@ def softmax_loss_naive(W: torch.Tensor, X: torch.Tensor, y: torch.Tensor, reg: f
     # regularization!                                                           #
     #############################################################################
     # Replace "pass" statement with your code
-    scores = X.mm(W)
-    prob = torch.pow(torch.ones_like(scores)*torch.e, scores)
-    tmp = torch.sum(prob, dim = 1)
-    prob = prob / tmp
-    for i in range(X.shape[0]):
-        loss += -torch.log(prob[y[i]])
-        for j in range(W.shape[1]):
-            # ∂Li/∂sij = pij - 1[j == y[i]]
-            coefficient = prob[j]
-            if j == y[i]:
-                coefficient = coefficient - 1
-            dW[:, j] += coefficient * X[i]
-    loss /= X.shape[0]
-    loss += torch.sum(W*W)
-    dW = dW / X.shape[0] + 2 * reg * W
+    # scores = X.mm(W)
+    # prob = torch.pow(torch.ones_like(scores)*torch.e, scores)
+    # tmp = torch.sum(prob, dim = 1)
+    # prob = prob / tmp
+    # for i in range(X.shape[0]):
+    #     loss += -torch.log(prob[y[i]])
+    #     for j in range(W.shape[1]):
+    #         # ∂Li/∂sij = pij - 1[j == y[i]]
+    #         coefficient = prob[j]
+    #         if j == y[i]:
+    #             coefficient = coefficient - 1
+    #         dW[:, j] += coefficient * X[i]
+    # loss /= X.shape[0]
+    # loss += torch.sum(W*W)
+    # dW = dW / X.shape[0] + 2 * reg * W
+    N = X.shape[0]
+    C = W.shape[1]
+    loss = 0.0
+    dW = torch.zeros_like(W)
+
+    for i in range(N):
+        scores = X[i].mm(W) # (C,)
+        scores = scores - scores.max()
+        exp_scores = scores.exp()
+        denom = exp_scores.sum()
+        prob = exp_scores / denom  # (C,)
+        loss += -scores[y[i]] + denom.log()
+        g = prob.clone()
+        g[y[i]] -= 1
+        for j in range(C):
+            dW[:, j] += X[i] * g[j]
+    loss = loss / N + reg * torch.sum(W * W)
+    dW = dW / N + 2 * reg * W
     #############################################################################
     #                          END OF YOUR CODE                                 #
     #############################################################################
@@ -541,7 +559,33 @@ def softmax_loss_vectorized(
     # regularization!                                                           #
     #############################################################################
     # Replace "pass" statement with your code
-    pass
+
+    # scores = X.mm(W) # shape (N, C)
+    # exp = torch.pow(torch.ones_like(scores)*torch.e, scores)
+    # tmp = torch.sum(exp, dim = 1)
+    # prob = exp / tmp.broadcast_to((X.shape[0], scores.shape[1]))
+    # rows = torch.range(0, X.shape[0])
+    # G = prob    # this overwrites prob
+    # G[rows, y] -= 1
+    # dW = X.t().mm(G) + 2*reg*W
+    # loss = -torch.sum(scores[rows, y]) + torch.sum(torch.log(exp.sum(dim = 1)))
+    
+    N = X.shape[0]
+    scores = X.mm(W)                         # (N, C)
+    scores = scores - scores.max(dim=1, keepdim=True).values
+
+    exp_scores = scores.exp()
+    denom = exp_scores.sum(dim=1, keepdim=True)  # (N, 1)
+    prob = exp_scores / denom                   # (N, C)
+
+    rows = torch.arange(N, device=X.device)
+
+    loss = (-scores[rows, y] + denom[:, 0].log()).mean()
+    loss += reg * torch.sum(W * W)
+
+    G = prob.clone()
+    G[rows, y] -= 1
+    dW = X.t().mm(G) / N + 2 * reg * W
     #############################################################################
     #                          END OF YOUR CODE                                 #
     #############################################################################
@@ -570,7 +614,8 @@ def softmax_get_search_params():
     # classifier.                                                             #
     ###########################################################################
     # Replace "pass" statement with your code
-    pass
+    learning_rates = [1e-5, 1e-4, 1e-3, 1e-2, 1e-1]
+    regularization_strengths = [1e-5, 1e-4, 1e-3, 1e-2, 1e-1]
     ###########################################################################
     #                           END OF YOUR CODE                              #
     ###########################################################################
