@@ -123,8 +123,48 @@ python -c "import torch, torchvision; print(torch.__version__, torchvision.__ver
 
 ### 5. 数据
 
-数据集由 `eecs598/data.py` / `a4_helper.py` 自动下载（CIFAR-10、VOC2007 等），第一次跑会慢。
-下载地址是国外的，慢的话同样挂代理：`export https_proxy=http://127.0.0.1:7897`。
+**CIFAR-10**（A1~A3）：由 `eecs598/data.py` 从 torchvision 的地址下，慢的话走 `hf-mirror.com` 的
+`Peyiloo/peyiloo` 仓库，27 MB/s。A2、A3 可以用软链接共享 A1 那份。
+
+**VOC2007**（A4）：**课程自带的下载地址已经失效**（全在 `/~justincj/data/` 下面，那个站点没了）。
+现在的做法：
+
+- 图片和标注：从 `https://pjreddie.com/media/files/VOCtrainval_06-Nov-2007.tar` 下载并解压到
+  `assignments/A4/VOCdevkit/`（457 MB）。官方 Oxford 源只有 2.6 KB/s，别用。
+- `voc07_train.json` / `voc07_val.json`：课程自己切的 split，存档里也没有留下，已根据 VOC 官方
+  的 train/val 划分（2501 / 2510）从 XML 标注重建，格式对齐 `a4_helper.py` 消费的字段。
+  这两个文件在 `assignments/A4/` 下，材料包里也存了一份。
+- 两份 A4 notebook 里的 `download=True` 已改成 `False`，直接跑就行。
+
+**COCO 字幕数据**（A5）：课程的 `coco.pt` 随个人主页一起没了，存档里也没留（已逐个路径查过）。
+现按课程截图给出的规格重建：**10,000 训练 / 500 验证、112×112 uint8、caption 截断到 15 词、378 MB**。
+
+- 来源：`clip-benchmark/wds_mscoco_captions`（HF 镜像，取了两片 train shard，约 1.2 万张图里的前 10,500 张）
+- 构建脚本：`tools/build_coco.py`
+- backbone 权重（regnet_x_400mf）已提前缓存到 `~/.cache/torch/hub/checkpoints/`
+
+---
+
+## 动手前先看什么
+
+A2 的教训：线性分类器那一格，在没看 L06 的情况下上纸推了半天梯度，然后 L06 告诉我「反向就是前向的倒放」。
+力气不算白花，但顺序是错的。
+
+**规矩：每一格动手前，先把那一讲里讲「新结构原理」的那一段看了。**
+不用整讲看完，细节可以边做边补，但框架必须在手。
+
+| 作业 | 动手前必看 | 讲什么 |
+|---|---|---|
+| A3 开头 | L06 后半「Modular backprop API」 | 怎么把网络拆成一层层模块，每层自带 forward / backward。A3 的前四个函数就是它 |
+| A3 全程 | L07 卷积网络 | 卷积、池化、BatchNorm。BN 在 `fully_connected`，卷积在 `convolutional` |
+| A3 后半 | L10、L11 训练网络 I / II | 激活函数、权重初始化、Dropout、学习率调度、超参 |
+| A3 收尾 | L08 CNN 架构 | 理解用，不直接卡代码，可以晚点补 |
+| A4 | L15 目标检测、L16 检测与分割 | 应用型，概念必须前置，不然连输入输出都对不上 |
+| A5 | L12 循环网络、L13 注意力 | |
+| A6 | L19 / L20 生成模型、L14 可视化与理解 | |
+
+已经看过的不用回看：L03、L04（损失与优化，管 A2 和 A3 的优化器）、L05。
+讲次编号按 2019 版（22 讲那版，也就是公开视频那一版）。
 
 ---
 

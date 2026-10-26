@@ -174,16 +174,23 @@ def attention_visualizer(img, attn_weights, token):
     C, H, W = img.shape
     assert C == 3, "We only support image with three color channels!"
 
-    # Reshape attention map
+    # Reshape attention map (cv2.resize takes (width, height))
     attn_weights = cv2.resize(
-        attn_weights.data.numpy().copy(), (H, W), interpolation=cv2.INTER_NEAREST
+        attn_weights.data.cpu().numpy().copy(),
+        (W, H),
+        interpolation=cv2.INTER_NEAREST,
     )
     attn_weights = np.repeat(np.expand_dims(attn_weights, axis=2), 3, axis=2)
 
-    # Combine image and attention map
-    img_copy = img.float().div(255.0).permute(1, 2, 0).numpy()[:, :, ::-1].copy()
+    # Combine image and attention map. Keep everything in float [0, 1] for the
+    # blending, then convert to uint8 at the end (cv2.putText in OpenCV >= 5
+    # strictly requires a CV_8U image).
+    img_copy = (
+        img.float().div(255.0).permute(1, 2, 0).cpu().numpy()[:, :, ::-1].copy()
+    )
     masked_img = cv2.addWeighted(attn_weights, 0.5, img_copy, 0.5, 0)
     img_copy = np.concatenate((np.zeros((25, W, 3)), masked_img), axis=0)
+    img_copy = (np.clip(img_copy, 0.0, 1.0) * 255.0).astype(np.uint8)
 
     # Add text
     cv2.putText(

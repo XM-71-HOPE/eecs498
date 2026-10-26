@@ -28,6 +28,7 @@ VOCdevkit/
 # 下面三块都是下载来的第三方内容（官方作业包、别人的解答、别人的笔记）。
 # 私有仓库想连它们一起备份，就把这三行删掉；要公开的话务必留着。
 official-zips/
+slides.md
 # reference-solutions/
 notes/
 
