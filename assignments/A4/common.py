@@ -84,7 +84,19 @@ class DetectorBackboneWithFPN(nn.Module):
         self.fpn_params = nn.ModuleDict()
 
         # Replace "pass" statement with your code
-        pass
+        for i in range(3, 6):
+            self.fpn_params[f'lat{i}'] = nn.Conv2d(
+                in_channels = dummy_out[f'c{i}'].shape[1],
+                out_channels=out_channels,
+                kernel_size=1,
+            )
+            self.fpn_params[f'con{i}'] = nn.Conv2d(
+                in_channels = out_channels,
+                out_channels= out_channels,
+                kernel_size=3,
+                padding=1,
+            )
+        
         ######################################################################
         #                            END OF YOUR CODE                        #
         ######################################################################
@@ -111,7 +123,12 @@ class DetectorBackboneWithFPN(nn.Module):
         ######################################################################
 
         # Replace "pass" statement with your code
-        pass
+        fpn_feats["p5"] = self.fpn_params['lat5'](backbone_feats['c5'])
+        fpn_feats["p4"] = self.fpn_params['lat4'](backbone_feats['c4']) + F.interpolate(input=fpn_feats['p5'], scale_factor=2)
+        fpn_feats["p3"] = self.fpn_params['lat3'](backbone_feats['c3']) + F.interpolate(input=fpn_feats['p4'], scale_factor=2)
+        for i in range(3, 6):
+            fpn_feats[f'p{i}'] = self.fpn_params[f'con{i}'](fpn_feats[f'p{i}'])
+
         ######################################################################
         #                            END OF YOUR CODE                        #
         ######################################################################
@@ -147,7 +164,7 @@ def get_fpn_location_coords(
 
     # Set these to `(N, 2)` Tensors giving absolute location co-ordinates.
     location_coords = {
-        level_name: None for level_name, _ in shape_per_fpn_level.items()
+        level_name: torch.tensor(0) for level_name, _ in shape_per_fpn_level.items()
     }
 
     for level_name, feat_shape in shape_per_fpn_level.items():
@@ -157,7 +174,26 @@ def get_fpn_location_coords(
         # TODO: Implement logic to get location co-ordinates below.          #
         ######################################################################
         # Replace "pass" statement with your code
-        pass
+        _, _, H, W = feat_shape
+        # location_coords[level_name] = torch.zeros(
+        #     size = (H, W, 2),
+        #     device=device,
+        #     dtype=dtype,
+        # )
+        # location_coords[level_name][:, :, 1] = level_stride*torch.linspace(0.5, H-0.5, H).unsqueeze(1).broadcast_to(H, W)
+        # location_coords[level_name][:, :, 0] = level_stride*torch.linspace(0.5, W-0.5, W).unsqueeze(0).broadcast_to(H, W)
+        # location_coords[level_name]=torch.flatten(location_coords[level_name], start_dim=0, end_dim=1)
+        # ai writes more beautiful code so i'll go with his
+        _, _, H, W = feat_shape
+        
+        ys = torch.arange(H, dtype=dtype, device=device) + 0.5   # (H,)
+        xs = torch.arange(W, dtype=dtype, device=device) + 0.5   # (W,)
+
+        yc = (ys * level_stride).view(H, 1).expand(H, W)         # (H, W)
+        xc = (xs * level_stride).view(1, W).expand(H, W)         # (H, W)
+
+        coords = torch.stack([xc, yc], dim=-1)                   # (H, W, 2) -> (xc, yc)
+        location_coords[level_name] = coords.reshape(-1, 2)      # (H*W, 2)
         ######################################################################
         #                             END OF YOUR CODE                       #
         ######################################################################
@@ -196,7 +232,39 @@ def nms(boxes: torch.Tensor, scores: torch.Tensor, iou_threshold: float = 0.5):
     # github.com/pytorch/vision/blob/main/torchvision/csrc/ops/cpu/nms_kernel.cpp
     #############################################################################
     # Replace "pass" statement with your code
-    pass
+    N = boxes.shape[0]
+    areas = torch.abs((boxes[:, 0] - boxes[:, 2]) * (boxes[:, 1] - boxes[:, 3])) 
+    order = torch.argsort(scores, descending=True)
+    suppressed = torch.zeros(size=(N, ), device=boxes.device, dtype=bool)
+    num_keep = 0
+    to_keep = []
+    # print(N)
+        
+    for _i in range(N):
+        # print("_i:")
+        # print(_i)
+        i = order[_i]
+        if suppressed[i]:
+            continue
+        num_keep+=1
+        to_keep.append(i)
+        for _j in range(_i+1, N):
+            j = order[_j]
+            if suppressed[j]:
+                continue
+            ix1, iy1, ix2, iy2 = boxes[i, :].unbind()
+            jx1, jy1, jx2, jy2 = boxes[j, :].unbind()
+            xx1 = max(ix1, jx1)
+            xx2 = min(ix2, jx2)
+            yy1 = max(iy1, jy1)
+            yy2 = min(iy2, jy2)
+            w = max(0, xx2 - xx1)
+            h = max(0, yy2 - yy1)
+            iou = (w*h) / (areas[i]+areas[j] - w*h)
+            if iou > iou_threshold:
+                suppressed[j] = True
+            
+    keep = torch.tensor(to_keep, dtype = int, device=scores.device)
     #############################################################################
     #                              END OF YOUR CODE                             #
     #############################################################################
